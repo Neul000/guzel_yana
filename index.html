@@ -111,10 +111,18 @@ button:focus-visible,#q:focus-visible,a:focus-visible{outline:2px solid var(--ac
 @media (max-width:360px){.wrap{padding-inline:12px}.switch button{padding:8px 16px}.price{padding:6px 12px}.price b{font-size:1.3rem}}
 @media (min-width:1500px){.wrap{max-width:1400px}}
 /* quiz pop-up */
-.cta{display:flex;align-items:center;gap:12px;margin:22px auto 0;max-width:520px;width:100%;border:1px solid var(--acc);background:linear-gradient(135deg,var(--acc-t),#fff);color:var(--ink);border-radius:16px;padding:14px 18px;font:400 15px var(--body);text-align:left;cursor:pointer;box-shadow:0 10px 24px -18px var(--acc-d)}
-.cta b{display:block;font-weight:600;color:var(--acc-d)}
-.cta svg,.fab svg{flex:none;width:26px;height:26px;fill:var(--acc-d)}
-.cta:hover{border-color:var(--acc-d)}
+.cta{display:flex;align-items:center;gap:18px;margin:26px auto 0;max-width:680px;width:100%;border:1.5px solid var(--acc);background:linear-gradient(135deg,var(--acc-t),#fff 70%);color:var(--ink);border-radius:22px;padding:18px 22px;font:400 15px var(--body);text-align:left;cursor:pointer;box-shadow:0 16px 32px -20px var(--acc-d);transition:transform .2s,box-shadow .2s}
+.cta .face{flex:none;width:76px;height:76px;color:var(--acc-d)}
+.ctxt{display:grid;gap:3px;flex:1;min-width:0}
+.ctxt b{font-family:var(--display);font-size:1.6rem;line-height:1.1;font-weight:700;color:var(--acc-d)}
+.ctxt span{color:var(--muted);font-size:14.5px}
+.go{flex:none;background:var(--acc-d);color:#fff;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14.5px;white-space:nowrap}
+.cta:hover{transform:translateY(-2px);box-shadow:0 20px 36px -20px var(--acc-d)}
+.cta:hover .face{animation:tilt .6s ease-in-out}
+@keyframes tilt{0%,100%{transform:rotate(0)}30%{transform:rotate(-10deg)}65%{transform:rotate(8deg)}}
+@media (prefers-reduced-motion:reduce){.cta:hover .face{animation:none}.cta{transition:none}}
+@media (max-width:560px){.cta{flex-wrap:wrap;gap:12px 14px;padding:16px}.cta .face{width:60px;height:60px}.ctxt b{font-size:1.4rem}.go{flex-basis:100%;text-align:center}}
+.fab svg{flex:none;width:26px;height:26px;fill:var(--acc-d)}
 .fab{position:fixed;z-index:20;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:12px 18px 12px 14px;background:var(--acc-d);color:#fff;font:600 14px var(--body);cursor:pointer;box-shadow:0 12px 28px -10px rgba(0,0,0,.45);transition:transform .2s,opacity .2s}
 .fab svg{fill:#fff;width:20px;height:20px}
 .fab.hide{opacity:0;transform:translateY(20px);pointer-events:none}
@@ -183,12 +191,17 @@ details p{margin:8px 0 0;color:var(--muted)}
     <h1 class="tagline">Find Your <em>Signature Scent</em></h1>
     <p class="intro">Discover your next favourite scent with Güzel by Yana. Setiap bau diterangkan dalam bahasa mudah, dengan panduan kekuatan dan bila sesuai dipakai.</p>
     <div class="prices"><span class="price"><span>10 ml</span><b>RM18</b></span><span class="price"><span>35 ml</span><b>RM36</b></span><small>Harga sama untuk semua bau</small></div>
-    <div class="contact"><span>Order melalui WhatsApp</span><span class="num" id="num">+60 11-1537 2020</span>
-      <a class="btn wa" href="https://wa.me/601115372020" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.1 1.6 2.5 4 3.5 1.5.6 2 .7 2.8.6.4-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></svg>Chat WhatsApp</a>
-      <button class="btn" type="button" id="copy">Salin nombor</button></div>
   </header>
 
-  <button class="cta" type="button" id="openq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.8 5.6L19.5 9l-5.7 1.6L12 16l-1.8-5.4L4.5 9l5.7-1.4zM19 15l.9 2.5L22.5 18l-2.6.7L19 21l-.9-2.3-2.6-.7 2.6-.5z"/></svg><span><b>Tak tahu nak pilih?</b> Cuba kuiz Find Your Scent</span></button>
+  <button class="cta" type="button" id="openq"><svg class="face" viewBox="0 0 80 80" aria-hidden="true">
+<circle cx="36" cy="44" r="30" fill="#fff" stroke="currentColor" stroke-width="3"/>
+<circle cx="25" cy="44" r="3.6" fill="currentColor"/><circle cx="46" cy="42" r="3.6" fill="currentColor"/>
+<path d="M18 33 q6 -5 12 -1" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M41 30 q6 -4 11 2" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M24 60 q4 -4 8 0 t8 0 t8 0" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+<circle cx="15" cy="53" r="4" fill="currentColor" opacity=".15"/><circle cx="55" cy="52" r="4" fill="currentColor" opacity=".15"/>
+<text x="66" y="22" font-family="Georgia,serif" font-size="22" font-weight="700" fill="currentColor">?</text>
+<text x="56" y="12" font-family="Georgia,serif" font-size="13" font-weight="700" fill="currentColor" opacity=".55">?</text></svg><span class="ctxt"><b>Tak tahu nak pilih?</b><span>Jawab 4 soalan, kami cadangkan bau yang sesuai untuk anda.</span></span><span class="go">Mula kuiz <span aria-hidden="true">&rarr;</span></span></button>
 
   <div class="switch" role="group" aria-label="Pilih koleksi">
     <button type="button" data-g="w" aria-pressed="true">Wanita<span id="nw"></span></button>
@@ -217,7 +230,7 @@ details p{margin:8px 0 0;color:var(--muted)}
     <details><summary>Adakah ini perfume original?</summary><p>Tidak. Semua perfume Güzel by Yana ialah wangian inspired-by. Bau dibuat menyerupai perfume rujukan, tetapi bukan produk asal jenama tersebut.</p></details>
     <details><summary>Bau sama 100% dengan original ke?</summary><p>Bau dibuat untuk menyerupai original, tetapi mungkin berbeza sedikit dari segi kekuatan dan ketahanan. Penerangan dalam katalog ini berdasarkan profil bau perfume rujukan.</p></details>
     <details><summary>Berapa harga?</summary><p>10 ml RM18 dan 35 ml RM36. Harga sama untuk semua bau.</p></details>
-    <details><summary>Macam mana nak order?</summary><p>Pilih saiz pada kad perfume, kemudian tekan butang order. WhatsApp akan terbuka dengan nombor, nama perfume dan saiz yang anda pilih. Anda juga boleh WhatsApp terus ke +60 11-1537 2020.</p></details>
+    <details><summary>Macam mana nak order?</summary><p>Pilih saiz pada kad perfume, kemudian tekan butang order. WhatsApp akan terbuka dengan nombor, nama perfume dan saiz yang anda pilih.</p></details>
     <details><summary>Apa maksud Ringan, Sederhana dan Kuat?</summary><p>Ringan: lembut, sesuai untuk harian dan pejabat. Sederhana: boleh dihidu dari dekat. Kuat: tahan lama dan lebih menonjol, spray sedikit pun sudah cukup.</p></details>
   </section>
 </div>
@@ -290,7 +303,7 @@ function chips(){
 }
 function badge(r){if(r[8]==="u")return `<span class="badge">Unisex</span>`;if(r[8]==="x")return `<span class="badge">${g==="w"?"Lebih maskulin":"Lebih feminin"}</span>`;return "";}
 function filt(q){return DATA[g].filter(r=>(!fam||grpOf(r[3])===fam)&&(!occ||r[7].includes(occ))&&(!int||r[6]===int)&&(!q||[r[1],r[10]?"":r[2],r[4],r[5],(FAM[r[3]]||[""])[0],(GROUPS[grpOf(r[3])]||[""])[0]].join(" ").toLowerCase().includes(q)));}
-function wa(r,s){return "https://wa.me/601115372020?text="+encodeURIComponent(`Hi Güzel by Yana, saya nak order No. ${r[0]} ${r[1]} (${g==="w"?"Wanita":"Lelaki"}), ${s} ml (RM${PRICE[s]})`);}
+function wa(r,s){return "https://wa.me/601115372020?text="+encodeURIComponent(`Hi Güzel by Yana, saya nak order.\nNombor: ${r[0]}\nNama: ${r[1]}\nKoleksi: ${g==="w"?"Wanita":"Lelaki"}\nSaiz: ${s} ml\nHarga: RM${PRICE[s]}`);}
 function render(){
   const q=$("#q").value.trim().toLowerCase();
   const rows=filt(q);
@@ -349,8 +362,5 @@ $("#qmodal").addEventListener("click",e=>{if(e.target.closest("[data-close]"))cl
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#qmodal").hidden)closeQ();});
 // hide floating button while the hero button is on screen
 try{new IntersectionObserver(es=>es.forEach(en=>$("#fab").classList.toggle("hide",en.isIntersecting))).observe($("#openq"));}catch(err){}
-$("#copy").addEventListener("click",e=>{const b=e.currentTarget;
-  const sel=()=>{const r=document.createRange();r.selectNodeContents($("#num"));const s=getSelection();s.removeAllRanges();s.addRange(r);};
-  try{navigator.clipboard.writeText("+601115372020").then(()=>{b.textContent="Nombor disalin";setTimeout(()=>b.textContent="Salin nombor",1800);},sel);}catch(err){sel();}});
 chips();render();
 </script>
