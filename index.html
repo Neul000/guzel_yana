@@ -154,6 +154,14 @@ body[data-g="m"] #mascot .tie{display:inline}
 .sz[aria-pressed="true"]{border-color:var(--d);box-shadow:0 0 0 1px var(--d) inset;background:var(--t)}
 .order{background:var(--d);border-color:var(--d);width:100%}
 .empty{color:var(--muted);padding:40px 0;text-align:center}
+.pager{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:40px}
+.pager button{white-space:nowrap;min-width:44px;height:44px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;font:600 15px var(--body);cursor:pointer;padding:0 14px;font-variant-numeric:tabular-nums}
+.pager button:hover:not(:disabled){border-color:var(--acc-d);color:var(--acc-d)}
+.pager button[aria-current="page"]{background:var(--acc-d);border-color:var(--acc-d);color:#fff}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager .gap{color:var(--muted);padding:0 2px}
+.pager .pinfo{display:none;color:var(--muted);font-size:15px;padding:0 6px}
+@media (max-width:560px){.pager .pn,.pager .gap{display:none}.pager .pinfo{display:inline}.pager{gap:6px}.pager button{padding:0 12px}}
 
 /* about */
 .about-g{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px;align-items:start}
@@ -291,6 +299,7 @@ body.lock{overflow:hidden}
     </div>
     <div class="status"><span class="count" id="count"></span><span class="result" id="result" hidden><span id="rtext"></span><button type="button" id="reset">Tunjuk semua</button></span></div>
     <div class="grid" id="grid"></div>
+    <nav class="pager" id="pager" aria-label="Halaman katalog"></nav>
     <p class="empty" id="empty" hidden>Tiada perfume yang padan. Cuba carian lain atau kosongkan tapisan.</p>
   </div>
 </section>
@@ -364,7 +373,8 @@ const GROUPS={
   warm:["Woody & Warm","Kayu, oud, rempah, kulit",["Oriental","Woody","Leather"],"#c9624a"]};
 const grpOf=f=>Object.keys(GROUPS).find(k=>GROUPS[k][2].includes(f));
 const PRICE={"10":18,"35":36};
-let g="w",fam="",occ="",int="",size="10",quizOn=false;
+let g="w",fam="",occ="",int="",size="10",quizOn=false,page=1;
+const PER=12;
 try{if(location.hash==="#lelaki")g="m";}catch(e){}
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -403,9 +413,12 @@ function chips(){
 function badge(r){if(r[8]==="u")return `<span class="badge">Unisex</span>`;if(r[8]==="x")return `<span class="badge">${g==="w"?"Lebih maskulin":"Lebih feminin"}</span>`;return "";}
 function filt(q){return DATA[g].filter(r=>(!fam||grpOf(r[3])===fam)&&(!occ||r[7].includes(occ))&&(!int||r[6]===int)&&(!q||[r[1],r[10]?"":r[2],r[4],r[5],(FAM[r[3]]||[""])[0],(GROUPS[grpOf(r[3])]||[""])[0]].join(" ").toLowerCase().includes(q)));}
 function wa(r,s){return "https://wa.me/601115372020?text="+encodeURIComponent(`Hi Güzel by Yana, saya nak order.\nNombor: ${r[0]}\nNama: ${r[1]}\nKoleksi: ${g==="w"?"Wanita":"Lelaki"}\nSaiz: ${s} ml\nHarga: RM${PRICE[s]}`);}
-function render(){
+function render(keep){
   const q=$("#q").value.trim().toLowerCase();
-  const rows=filt(q);
+  const all=filt(q);
+  const pages=Math.max(1,Math.ceil(all.length/PER));
+  if(!keep)page=1; page=Math.min(Math.max(1,page),pages);
+  const start=(page-1)*PER, rows=all.slice(start,start+PER);
   $("#grid").innerHTML=rows.map(r=>{const [lv,lt]=INT[r[6]];const f=FAM[r[3]]||["",'#ccc','#555','#eee'];
     return `<article class="card" data-size="${size}" style="--c:${f[1]};--d:${f[2]};--t:${f[3]}">
 <div class="visual"><span class="no">No. ${r[0]}</span>${badge(r)}<div class="arch">${bottles("b"+g+r[0])}</div></div>
@@ -414,10 +427,22 @@ function render(){
 <div class="meta"><span class="str"><span class="bar" aria-label="Kekuatan ${lt}">${[1,2,3].map(i=>`<i class="${i<=lv?"on":""}"></i>`).join("")}</span>${lt}</span><span class="occ">· ${[...r[7]].map(k=>OCC[k]).join(", ")}</span></div>
 <div class="buy"><div class="sizes" role="group" aria-label="Pilih saiz">${["10","35"].map(s=>`<button type="button" class="sz" data-s="${s}" data-i="${r[0]}" aria-pressed="${s===size}">${s} ml<b>RM${PRICE[s]}</b></button>`).join("")}</div>
 <a class="btn order" target="_blank" rel="noopener" href="${wa(r,size)}">Order ${size} ml via WhatsApp</a></div></div></article>`;}).join("");
-  $("#count").textContent=`Menunjukkan ${rows.length} daripada ${DATA[g].length} perfume ${g==="w"?"wanita":"lelaki"}`;
-  $("#empty").hidden=rows.length>0;
+  const tot=all.length===DATA[g].length?`${all.length} perfume ${g==="w"?"wanita":"lelaki"}`:`${all.length} perfume yang padan`;
+  $("#count").textContent=all.length?`Menunjukkan ${start+1}–${start+rows.length} daripada ${tot}`:"";
+  $("#empty").hidden=all.length>0;
+  pager(pages);
   $("#result").hidden=!quizOn;
 }
+function pager(pages){
+  const el=$("#pager");if(pages<=1){el.innerHTML="";return;}
+  const nums=[];for(let i=1;i<=pages;i++){if(i===1||i===pages||Math.abs(i-page)<=1)nums.push(i);else if(nums[nums.length-1]!=="…")nums.push("…");}
+  el.innerHTML=`<button type="button" class="pv" data-p="${page-1}" ${page===1?"disabled":""} aria-label="Halaman sebelum">&larr; Sebelum</button>`+
+    nums.map(n=>n==="…"?`<span class="gap" aria-hidden="true">…</span>`:`<button type="button" class="pn" data-p="${n}" ${n===page?'aria-current="page"':""} aria-label="Halaman ${n}">${n}</button>`).join("")+
+    `<span class="pinfo" aria-label="Halaman ${page} daripada ${pages}">${page} / ${pages}</span>`+
+    `<button type="button" class="pv" data-p="${page+1}" ${page===pages?"disabled":""} aria-label="Halaman seterusnya">Seterusnya &rarr;</button>`;
+}
+$("#pager").addEventListener("click",e=>{const b=e.target.closest("button[data-p]");if(!b||b.disabled)return;page=+b.dataset.p;render(true);
+  document.querySelector(".status").scrollIntoView({block:"start"});});
 function setG(n){if(n===g)return;g=n;fam=occ=int="";quizOn=false;try{history.replaceState(null,"",g==="m"?"#lelaki":"#wanita");}catch(e){}chips();render();}
 document.querySelector(".switch").addEventListener("click",e=>{const b=e.target.closest("button");if(b)setG(b.dataset.g);});
 $("#rf").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;fam=b.dataset.f;quizOn=false;chips();render();});
@@ -425,7 +450,7 @@ $("#ro").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)re
 $("#ri").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;int=b.dataset.i;quizOn=false;chips();render();});
 $("#fclear").addEventListener("click",()=>{fam=occ=int="";quizOn=false;chips();render();});
 $("#ftog").addEventListener("click",e=>{const b=e.currentTarget,o=b.getAttribute("aria-expanded")!=="true";b.setAttribute("aria-expanded",o);$("#filters").hidden=!o;});
-$("#q").addEventListener("input",render);
+$("#q").addEventListener("input",()=>render());
 $("#reset").addEventListener("click",()=>{fam=occ=int="";quizOn=false;$("#q").value="";chips();render();});
 $("#grid").addEventListener("click",e=>{const b=e.target.closest(".sz");if(!b)return;const card=b.closest(".card");
   card.querySelectorAll(".sz").forEach(x=>x.setAttribute("aria-pressed",x===b));card.dataset.size=b.dataset.s;
